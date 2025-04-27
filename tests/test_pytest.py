@@ -1,6 +1,20 @@
 from pytest import mark
 from codigo.jogo import brincadeira
 
+# Pytest usa asserts simples do Python, com relatórios detalhados de falhas, facilitando a escrita e depuração de testes.
+
+# @pytest.fixture cria funções reutilizáveis para configurar dados ou estados, correspondendo à fase 'Arrange' do modelo AAA.
+
+# @pytest.mark.parametrize executa o mesmo teste com diferentes entradas, reduzindo duplicação e cobrindo múltiplos cenários.
+
+# @pytest.mark permite categorizar e configurar testes (ex.: skip, xfail, personalizado). Marcadores personalizados devem ser registrados no pytest.ini.
+
+# Pytest fornece relatórios detalhados de falhas e suporta depuração com --pdb ou análise de desempenho com --durations.
+
+# Configurações e marcadores personalizados são definidos em pytest.ini ou pyproject.toml para centralizar e evitar warnings.
+
+# Pytest suporta plugins (ex.: pytest-cov, pytest-xdist) para adicionar funcionalidades como cobertura de código ou testes paralelos.
+
 """
 O teste é formado por 3 etapas (GWT - AAA):
 
@@ -13,28 +27,28 @@ OU
 - Assert
 
 """
-
+# Testes para números comuns
 def test_quando_brincadeira_receber_1_entao_deve_retornar_1():
     assert brincadeira(1) == 1
     
     # Versão explicada do código:
-
     """entrada = 1 # Dado
     esperado = 1 # Dado
-
     resultado = brincadeira(entrada) # Quando
-
     assert resultado == esperado # Então"""
 
 
 def test_quando_brincadeira_receber_2_entao_deve_retornar_2():
     assert brincadeira(2) == 2
 
-
+# Testes para múltiplos de 3 ('queijo')
 def test_quando_brincadeira_receber_3_entao_deve_retornar_queijo():
     assert brincadeira(3) == 'queijo'
 
-
+# @pytest.mark é um decorador do Pytest para marcar e configurar testes. 
+# Ex.: xfail (falha esperada), parametrize (múltiplos dados), skip (pular teste).
+# @pytest.mark.goiabada é um marcador personalizado para agrupar testes relacionados à saída 'goiabada'.
+# Testes para múltiplos de 5 ('goiabada'):
 @mark.goiabada
 def test_quando_brincadeira_receber_5_entao_deve_retornar_goiabada():
     assert brincadeira(5) == 'goiabada'
@@ -43,6 +57,47 @@ def test_quando_brincadeira_receber_5_entao_deve_retornar_goiabada():
 def test_quando_brincadeira_receber_10_entao_deve_retornar_goiabada():
     assert brincadeira(10) == 'goiabada'
 
-@mark.goiabada
-def test_quando_brincadeira_receber_20_entao_deve_retornar_goiabada():
+
+# @pytest.mark.skip pula a execução de um teste. 
+# Usa reason="motivo" para explicar por que o teste é ignorado.
+@mark.skip(reason='ainda não implementei') #serve para pular teste que ainda não deve ser feito
+def test_quando_brincadeira_receber__1_entao_deve_retornar_None():
     assert brincadeira(20) == 'goiabada'
+
+
+# Testa múltiplos de 3 para garantir que a função retorna 'queijo'.
+@mark.parametrize(
+        'entrada',
+        [3, 6, 9, 12, 18]
+)
+def test_brincadeira_deve_retornar_queijo_com_multiplos_de_3(entrada):
+    assert brincadeira(entrada) == 'queijo'
+
+
+# @pytest.mark.parametrize permite executar um teste com múltiplos conjuntos de dados.
+# Define parâmetros e valores para testar várias condições.
+@mark.parametrizado
+@mark.parametrize(
+    'entrada, esperado',
+    [(1, 1), (2 , 2), (3, 'queijo'), (4, 4), (5, 'goiabada')]
+)
+def test_brincadeira_deve_retornar_valor_esperado(entrada, esperado):
+    assert brincadeira(entrada) == esperado
+
+# @pytest.mark.xfail marca teste como esperado para falhar (bug ou funcionalidade pendente).
+# Usa reason="motivo", strict, raises, run.
+import sys
+
+@mark.xfail(sys.platform == 'win32', reason="Funcionalidade não suportada no Windows")
+def test_xfail_windows():
+    assert brincadeira(20) != 'goiabada'
+
+@mark.xfail(reason="Bug conhecido: comportamento incorreto para entrada 20")
+def test_xfail2():
+    assert brincadeira(20) == 'goiabada'
+
+# @pytest.mark.skipif pula um teste se uma condição for verdadeira. 
+# Usa reason="motivo" e uma expressão condicional (ex.: sys.version).
+@mark.skipif(sys.platform == 'win32', reason="Teste pulado no Windows devido a comportamento instável")
+def test_xfail_windows_skip():
+    assert brincadeira(20) != 'goiabada'
