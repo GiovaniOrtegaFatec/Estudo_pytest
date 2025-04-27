@@ -15,6 +15,8 @@ from codigo.jogo import brincadeira
 
 # Pytest suporta plugins (ex.: pytest-cov, pytest-xdist) para adicionar funcionalidades como cobertura de código ou testes paralelos.
 
+# Pytest enfatiza simplicidade (asserts), reutilização (fixtures, parametrização), flexibilidade (marcadores), relatórios detalhados, e extensibilidade (plugins).
+
 """
 O teste é formado por 3 etapas (GWT - AAA):
 
