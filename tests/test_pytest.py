@@ -17,6 +17,10 @@ from codigo.jogo import brincadeira
 
 # Pytest enfatiza simplicidade (asserts), reutilização (fixtures, parametrização), flexibilidade (marcadores), relatórios detalhados, e extensibilidade (plugins).
 
+# A comunidade do Pytest é ativa, com contribuições via Open Collective, Tidelift e GitHub. Plugins como pytest-cov e pytest-xdist ampliam sua funcionalidade, e recursos educacionais (ex.: Real Python, freeCodeCamp) ajudam na adoção.
+
+# Pytest é aplicável a testes unitários, de integração, funcionais, e especializados (ex.: web, redes, ML), com suporte a CI/CD, plugins (pytest-cov, pytest-xdist), e relatórios detalhados.
+
 """
 O teste é formado por 3 etapas (GWT - AAA):
 
