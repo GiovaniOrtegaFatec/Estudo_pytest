@@ -1,4 +1,4 @@
-from pytest import mark
+from pytest import mark,fixture
 from codigo.jogo import brincadeira
 
 # Pytest usa asserts simples do Python, com relatórios detalhados de falhas, facilitando a escrita e depuração de testes.
@@ -21,6 +21,21 @@ from codigo.jogo import brincadeira
 
 # Pytest é aplicável a testes unitários, de integração, funcionais, e especializados (ex.: web, redes, ML), com suporte a CI/CD, plugins (pytest-cov, pytest-xdist), e relatórios detalhados.
 
+# Uma fixture é uma forma de evitar repetição de código em testes
+"""
+Fixture para fornecer dados de teste comuns para a função brincadeira.
+Retorna uma lista de tuplas (entrada, esperado) para testar múltiplos casos.
+"""
+@fixture
+def casos_de_teste():
+    return [
+        (1, 1),              # Número não múltiplo de 3 ou 5
+        (2, 2),              # Número não múltiplo de 3 ou 5
+        (3, 'queijo'),       # Múltiplo de 3
+        (5, 'goiabada'),     # Múltiplo de 5
+        (15, 'Romeu e Julieta')  # Múltiplo de 3 e 5
+    ]
+
 """
 O teste é formado por 3 etapas (GWT - AAA):
 
@@ -32,16 +47,25 @@ OU
 - Act
 - Assert
 
+xUnit Patterns - Gerard Mezaros
+
+- Setup - Dado
+- Exercise - Quando
+- Verify - Então
+- TearDown - "Desmonta tudo antes que seja tarde"
+
 """
 # Testes para números comuns
 def test_quando_brincadeira_receber_1_entao_deve_retornar_1():
     assert brincadeira(1) == 1
     
     # Versão explicada do código:
-    """entrada = 1 # Dado
+    """
+    entrada = 1 # Dado
     esperado = 1 # Dado
     resultado = brincadeira(entrada) # Quando
-    assert resultado == esperado # Então"""
+    assert resultado == esperado # Então
+    """
 
 
 def test_quando_brincadeira_receber_2_entao_deve_retornar_2():
@@ -81,14 +105,20 @@ def test_brincadeira_deve_retornar_queijo_com_multiplos_de_3(entrada):
 
 
 # @pytest.mark.parametrize permite executar um teste com múltiplos conjuntos de dados.
-# Define parâmetros e valores para testar várias condições.
-@mark.parametrizado
-@mark.parametrize(
-    'entrada, esperado',
-    [(1, 1), (2 , 2), (3, 'queijo'), (4, 4), (5, 'goiabada')]
-)
+# @mark.usa_casos_de_teste marca testes que usam a fixture 'casos_de_teste'; execute com 'pytest -m usa_casos_de_teste'.
+@mark.usa_casos_de_teste
+@mark.parametrize('entrada, esperado', [(1, 1), (2, 2), (3, 'queijo'), (4, 4), (5, 'goiabada')])
 def test_brincadeira_deve_retornar_valor_esperado(entrada, esperado):
     assert brincadeira(entrada) == esperado
+
+# Testes para múltiplos de 3 e 5 usando a fixture casos_de_teste
+@mark.usa_casos_de_teste
+def test_quando_brincadeira_receber_multiplos_3_e_5_entao_deve_retornar_romeu_e_julieta(casos_de_teste):
+    for entrada, esperado in casos_de_teste: # Itera sobre cada par (entrada, esperado) da fixture 'casos_de_teste'.
+        if esperado == 'Romeu e Julieta': # Verifica se o valor esperado é 'Romeu e Julieta' (múltiplo de 3 e 5).
+            assert brincadeira(entrada) == esperado # Testa se brincadeira(entrada) retorna 'Romeu e Julieta' como esperado.
+
+
 
 # @pytest.mark.xfail marca teste como esperado para falhar (bug ou funcionalidade pendente).
 # Usa reason="motivo", strict, raises, run.
@@ -107,3 +137,11 @@ def test_xfail2():
 @mark.skipif(sys.platform == 'win32', reason="Teste pulado no Windows devido a comportamento instável")
 def test_xfail_windows_skip():
     assert brincadeira(20) != 'goiabada'
+
+# @pytest.mark.stdout é um marcador personalizado para testes que verificam a saída padrão (stdout).
+# A fixture capsys captura stdout e stderr, permitindo testar impressões na tela.
+@mark.stdout
+def test_brincadeira_deve_escrever_entrei_na_brincadeira_na_tela(capsys):
+    brincadeira(0)
+    resultado = capsys.readouterr()
+    assert resultado.out == 'Entrei na brincadeira!\n'

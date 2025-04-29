@@ -11,6 +11,7 @@ Retorno:
 """
 
 def brincadeira(numero):
+    print('Entrei na brincadeira!')
     if numero % 3 == 0 and numero % 5 == 0:
         return 'Romeu e Julieta'
     elif numero % 3 == 0:
