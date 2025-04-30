@@ -57,7 +57,7 @@ def test_quando_brincadeira_receber_1_entao_deve_retornar_1():
     assert brincadeira(1) == 1
 ```
 Para rodar este e outros testes:
-```bash
+```python
 python -m pytest test_pytest.py
 ```
 
